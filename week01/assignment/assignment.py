@@ -2,7 +2,7 @@
 Course: CSE 251 
 Lesson Week: 01
 File: assignment.py 
-Author: <Add name here>
+Author: Jake Graham
 
 Purpose: Drawing with Python Turtle
 
@@ -171,7 +171,22 @@ def run_with_threads(tur, log, main_turtle):
     # TODO - Start add your code here.
     # You need to use 4 threads where each thread concurrently drawing one type of shape.
     # You are free to change any functions in this code except main()
-
+    #making threads for each function
+    square_thread = threading.Thread(target=draw_squares, args=tur)
+    circle_thread = threading.Thread(target=draw_circles,args=tur)
+    triangle_thread = threading.Thread(target=draw_triangles,args=tur)
+    rectangle_thread = threading.Thread(target=draw_rectangles,args=tur)
+    #to actually start making the drawings
+    square_thread.start()
+    circle_thread.start()
+    triangle_thread.start()
+    rectangle_thread.start()
+    #to stop the threads from what I understood from the reading
+    square_thread.join()
+    circle_thread.join()
+    triangle_thread.join()
+    rectangle_thread.join()
+    #I have no Idea why this isn't drawing anything
     log.step_timer('All drawing commands have been created')
 
     log.write(f'Number of Drawing Commands: {tur.get_command_count()}')
@@ -202,6 +217,7 @@ def main():
 
     # Test 1 - Drawing with no threads
     # remove the file 'drawpart1.txt' to stop drawing part 1
+    
     if os.path.exists('drawpart1.txt'):
         run_no_threads(turtle251, log, main_turtle)
     
