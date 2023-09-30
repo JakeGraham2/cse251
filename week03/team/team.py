@@ -2,7 +2,7 @@
 Course: CSE 251
 Lesson Week: 03
 File: team.py
-Author: Brother Comeau
+Author: Jacob Graham
 
 Purpose: Team Activity: 
 
@@ -151,6 +151,8 @@ def main():
 
     start = time.perf_counter()
     for word in words:
+        with mp.Pool(2) as p:
+            p.map(board.find_word, words)
         if not board.find_word(word):
             print(f'Error: Could not find "{word}"')
     

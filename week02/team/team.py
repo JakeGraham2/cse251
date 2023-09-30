@@ -2,7 +2,7 @@
 Course: CSE 251
 Lesson Week: 02 - Team Activity
 File: team.py
-Author: Brother Comeau
+Author: Jacob Graham
 
 Purpose: Playing Card API calls
 Website is: http://deckofcardsapi.com
@@ -23,10 +23,13 @@ from cse251 import *
 
 # TODO Create a class based on (threading.Thread) that will
 # make the API call to request data from the website
-
+class api_Mister(threading.Thread):
+    def api_Shuffle()
+    
 class Request_thread(threading.Thread):
     # TODO - Add code to make an API call and return the results
     # https://realpython.com/python-requests/
+    requests.get()
     pass
 
 class Deck:
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     #        team_get_deck_id.py program once. You can have
     #        multiple decks if you need them
 
-    deck_id = 'ENTER ID HERE'
+    deck_id = "zuvesj5vkl41"
 
     # Testing Code >>>>>
     deck = Deck(deck_id)

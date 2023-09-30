@@ -2,7 +2,7 @@
 Course: CSE 251 
 Lesson Week: 02
 File: assignment.py 
-Author: Brother Comeau
+Author: Jacob Graham
 
 Purpose: Retrieve Star Wars details from a server
 
@@ -54,6 +54,14 @@ call_count = 0
 
 
 # TODO Add your threaded class definition here
+class APICallThread(threading.Thread):
+    def __init__(self, url):
+        super().__init__()
+        self.url = url
+
+    def run(self):
+        global call_count
+        call_count += 1
 
 
 # TODO Add any functions you need here
@@ -64,10 +72,44 @@ def main():
     log.start_timer('Starting to retrieve data from the server')
 
     # TODO Retrieve Top API urls
+    top_api_result = {}
+    top_api_thread = APICallThread(TOP_API_URL)
+    top_api_thread.start()
+    top_api_thread.join()
+    top_api_urls = top_api_thread.run
 
     # TODO Retireve Details on film 6
+    film_url = top_api_urls['films']
+    film_6_thread = APICallThread(film_url + '6/')
+    film_6_thread.start()
+    film_6_thread.join()
+    film_6_details = film_6_thread.result
 
     # TODO Display results
+    log.write('Top API URLs:')
+    for key, value in top_api_result.items():
+      log.write(f'{key}: {value}')
+
+    log.write('\nDetails of Film 6:')
+    log.write(f'Title: {film_6_details["title"]}')
+    log.write(f'Director: {film_6_details["director"]}')
+    log.write(f'Release Date: {film_6_details["release_date"]}')
+    log.write(f'Producer: {film_6_details["producer"]}')
+    log.write('Characters:')
+    for character in film_6_details["characters"]:
+        log.write(f'- {character}')
+    log.write('Planets:')
+    for planet in film_6_details["planets"]:
+        log.write(f'- {planet}')
+    log.write('Starships:')
+    for starship in film_6_details["starships"]:
+        log.write(f'- {starship}')
+        log.write('Vehicles:')
+    for vehicle in film_6_details["vehicles"]:
+        log.write(f'- {vehicle}')
+        log.write('Species:')
+    for species in film_6_details["species"]:
+        log.write(f'- {species}')
 
     log.stop_timer('Total Time To complete')
     log.write(f'There were {call_count} calls to the server')

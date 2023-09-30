@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.333">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>prepare</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="prepare_files/libs/clipboard/clipboard.min.js"></script>
+<script src="prepare_files/libs/quarto-html/quarto.js"></script>
+<script src="prepare_files/libs/quarto-html/popper.min.js"></script>
+<script src="prepare_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="prepare_files/libs/quarto-html/anchor.min.js"></script>
+<link href="prepare_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="prepare_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="prepare_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="prepare_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="prepare_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<p><img src="../site/banner.png" class="img-fluid"></p>
+<section id="prepare-processes-and-analyzing-programs" class="level1">
+<h1>03 Prepare: Processes and Analyzing Programs</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This week’s lesson is on Python processes and Introduction to Analyzing programs for parallelism.</p>
+</section>
+<section id="python-process" class="level2">
+<h2 class="anchored" data-anchor-id="python-process">Python Process</h2>
+<p>We have been using threads in Python. Threads in Python are limited where only one thread can run at a time because of the GIL. Threads are concurrent but not parallel.</p>
+<p>Processes do not have this limit. Each process created in Python contains it’s own GIL. This allows processes to run on different CPUs on the computer and are running concurrently and parallel.</p>
+</section>
+<section id="differences-between-threads-and-processes-from-week-01" class="level2">
+<h2 class="anchored" data-anchor-id="differences-between-threads-and-processes-from-week-01">Differences between threads and processes (From week 01)</h2>
+<section id="python-global-interpreter-gil" class="level3">
+<h3 class="anchored" data-anchor-id="python-global-interpreter-gil">Python Global Interpreter (GIL)</h3>
+<p>Before we can talk about threads and processes, we need to understand the Python Global Interpreter Lock or GIL. It is a mutex (or a lock) that allows only one thread to hold the control of the Python interpreter.</p>
+<p>This means that only one thread can be in a state of execution at any one time. If you write single-threaded programs, then the GIL has no impact. However, when writing parallel and concurrent programs, it is critical to understand it.</p>
+</section>
+<section id="process" class="level3">
+<h3 class="anchored" data-anchor-id="process">Process</h3>
+<p>A “Process” is a program that has been loaded by the operating system and is running. It contains 1 to N threads. All processes contain a main thread. The operating system will start that main thread for the process and when that main thread ends, the process ends. <a href="https://en.wikipedia.org/wiki/Process_(computing)">Process (computing)</a></p>
+</section>
+<section id="thread" class="level3">
+<h3 class="anchored" data-anchor-id="thread">Thread</h3>
+<p>A thread is the smallest unit managed by the operating system that is scheduled to run on the CPU. All processes contain a main thread.<a href="https://en.wikipedia.org/wiki/Thread_(computing)">Thread (computing)</a></p>
+</section>
+<section id="how-python-handles-threads-and-processes" class="level3">
+<h3 class="anchored" data-anchor-id="how-python-handles-threads-and-processes">How Python handles threads and processes</h3>
+<p>Because of the GIL, all threads are running concurrently in your program. The operating system will give each thread a little time slice on the CPU where it will appear that they are all running at the some time.</p>
+<p>When you create a process in Python, each process will contain their own instance of a GIL. This allows each process to run in parallel on the computer. This is because the operating system is free to place each Python process on a different CPU.</p>
+</section>
+<section id="io-and-cpu-bound-code" class="level3">
+<h3 class="anchored" data-anchor-id="io-and-cpu-bound-code">I/O and CPU Bound code</h3>
+<p>Computer programs have been analyzed for many years and researchers have noticed that during the life of a process, the process will <strong>switch</strong> between waiting for I/O (ie., user input, Internet requests, file accesses) and running instructions on the CPU (ie., calculations, graphics, etc…).</p>
+<p><strong>I/O Bound</strong></p>
+<blockquote class="blockquote">
+<p>In computer science, I/O bound refers to a condition in which the time it takes to complete a computation is determined principally by the period spent waiting for input/output operations to be completed. This is the opposite of a task being CPU bound. This circumstance arises when the rate at which data is requested is slower than the rate it is consumed or, in other words, more time is spent requesting data than processing it. <a href="https://en.wikipedia.org/wiki/I/O_bound">I/O Bound Webpage</a></p>
+</blockquote>
+<p>In Python, threads are used for I/O Bound problems</p>
+<p><strong>CPU Bound</strong></p>
+<blockquote class="blockquote">
+<p>In computer science, a computer is CPU-bound (or compute-bound) when the time for it to complete a task is determined principally by the speed of the central processor: processor utilization is high, perhaps at 100% usage for many seconds or minutes. <a href="https://en.wikipedia.org/wiki/CPU-bound">CPU Bound Webpage</a></p>
+</blockquote>
+<p>In Python, processes are used for CPU Bound problems</p>
+</section>
+</section>
+<section id="multiprocessing-module" class="level2">
+<h2 class="anchored" data-anchor-id="multiprocessing-module">multiprocessing module</h2>
+<p><a href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing Module</a></p>
+<blockquote class="blockquote">
+<p>multiprocessing is a package that supports spawning processes using an API similar to the threading module. The multiprocessing package offers both local and remote concurrency, effectively side-stepping the Global Interpreter Lock by using subprocesses instead of threads. Due to this, the multiprocessing module allows the programmer to fully leverage multiple processors on a given machine. It runs on both Unix and Windows.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The multiprocessing module also introduces APIs which do not have analogs in the threading module. A prime example of this is the Pool object which offers a convenient means of parallelizing the execution of a function across multiple input values, distributing the input data across processes (data parallelism).</p>
+</blockquote>
+<p>To add processes to your Python program, you need to import the <code>multiprocessing</code> module. Note in the code sample below that processes are created and used just like threads.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing <span class="im">as</span> mp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> func(name):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'hello </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> mp.Process(target<span class="op">=</span>func, args<span class="op">=</span>(<span class="st">'bob'</span>,))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    p.start()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    p.join()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here is a code sample calling a function that changes a global variable. The function is called from a process then a thread.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> threading</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing <span class="im">as</span> mp</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>global_var <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> func(name):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> global_var</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    global_var <span class="op">=</span> <span class="dv">123456</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>global_var<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Before process global_var = </span><span class="sc">{</span>global_var<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> mp.Process(target<span class="op">=</span>func, args<span class="op">=</span>(<span class="st">'bob'</span>,))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    p.start()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    p.join()</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'After process global_var = </span><span class="sc">{</span>global_var<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>()</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Before thread global_var = </span><span class="sc">{</span>global_var<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> threading.Thread(target<span class="op">=</span>func, args<span class="op">=</span>(<span class="st">'bob'</span>,))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    t.start()</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    t.join()</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'After thread global_var = </span><span class="sc">{</span>global_var<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Output:</p>
+<pre><code>Before process global_var = 0
+bob: 123456
+After process global_var = 0
+
+Before thread global_var = 0
+bob: 123456
+After thread global_var = 123456</code></pre>
+<p>In the output, you see that the thread was able to change the global variable while the process wasn’t. This is because the process, when created, gets it’s own GIL and it’s own copy of <code>global_var</code>. This is different than the <code>global_var</code> in the main thread. This is why it doesn’t change. Another reason not to use global variables.</p>
+</section>
+<section id="process-pool-and-map-function" class="level2">
+<h2 class="anchored" data-anchor-id="process-pool-and-map-function">Process Pool and Map() function</h2>
+<p><a href="https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing.pool">Python Documentation</a></p>
+<p>The pool feature of the multiprocessing package allows you to indicate the number of processes that you want to use for a parallel section of your program.</p>
+<p>Break down of the following example:</p>
+<p><strong>with mp.Pool(2)</strong></p>
+<p>This creates a process pool of 2 processes. They are not running at this point.</p>
+<p><strong>p.map(func, names)</strong></p>
+<p>The map function takes in a reference to a function that you want to apply to the process pool. The function that you place in the first argument can only have 1 argument.</p>
+<p>The second argument is a list of items that you want the processes to use. The Pool will divide up the list for the processes in the pool to use. In this case, <code>'John'</code> was used by one process where the process called <code>func('John')</code>. Then ‘Mary’ was used by the other process (or the same one for ‘John’), etc. until all of the items in the list are used.</p>
+<p>In the output, you can see that process 1 called func() with two names from the list and the other process handled the other three. (The function func() required a sleep() call because all of the names in the list would have been processed by just one of the processes).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing <span class="im">as</span> mp</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> func(name):</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="fl">0.5</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>os<span class="sc">.</span>getpid()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    names <span class="op">=</span> [<span class="st">'John'</span>, <span class="st">'Mary'</span>, <span class="st">'April'</span>, <span class="st">'Murry'</span>, <span class="st">'George'</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a pool of 2 processes</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mp.Pool(<span class="dv">2</span>) <span class="im">as</span> p:</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># map those 2 process to the function func()</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Python will call the function func() alternating items in the names list.</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># the two processes will run in parallel</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        p.<span class="bu">map</span>(func, names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>output:</p>
+<pre><code>Mary, 23316
+Murry, 23316
+John, 3672
+April, 3672
+George, 3672</code></pre>
+<p>Here is an example of using tuples for the argument to the function used for a process pool. Notice the output order from the program. The first tuple in the list was <code>(1, 2)</code>. However, it wasn’t the first tuple processed by the pool. You can’t depend on any order of processing while using a pool - you just know that it will be all processed.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing <span class="im">as</span> mp</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_two_numbers(values):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The sleep is here to slow down the program</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="fl">0.5</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    number1 <span class="op">=</span> values[<span class="dv">0</span>]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    number2 <span class="op">=</span> values[<span class="dv">1</span>]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'PID = </span><span class="sc">{</span>os<span class="sc">.</span>getpid()<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>number1<span class="sc">}</span><span class="ss"> + </span><span class="sc">{</span>number2<span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>number1 <span class="op">+</span> number2<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># create argument list for the pool</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    numbers <span class="op">=</span> []</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">11</span>, <span class="dv">52</span>))</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">12</span>, <span class="dv">62</span>))</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">13</span>, <span class="dv">72</span>))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">1312</span>, <span class="dv">2272</span>))</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">1332</span>, <span class="dv">732</span>))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    numbers.append((<span class="dv">13434</span>, <span class="op">-</span><span class="dv">23272</span>))</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Numbers list: </span><span class="sc">{</span>numbers<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a pool of 2 processes</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mp.Pool(<span class="dv">2</span>) <span class="im">as</span> p:</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        p.<span class="bu">map</span>(add_two_numbers, numbers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>output:</p>
+<pre><code>Numbers list: [(1, 2), (11, 52), (12, 62), (13, 72), (1312, 2272), (1332, 732), (13434, -23272)]
+PID = 27284: 1 + 2 = 3
+PID = 27284: 12 + 62 = 74
+PID = 27284: 1332 + 732 = 2064
+PID = 6132: 11 + 52 = 63
+PID = 6132: 13 + 72 = 85
+PID = 6132: 1312 + 2272 = 3584
+PID = 6132: 13434 + -23272 = -9838</code></pre>
+<p>Here is the output of the same program above using a pool size of 4. Notice that the list of numbers was spread over the processes. (ie., load balancing).</p>
+<pre><code>PID = 26204: 13 + 72 = 85
+PID = 4520: 1 + 2 = 3
+PID = 4520: 1332 + 732 = 2064
+PID = 27168: 11 + 52 = 63
+PID = 27168: 1312 + 2272 = 3584
+PID = 14268: 12 + 62 = 74
+PID = 14268: 13434 + -23272 = -9838</code></pre>
+<p>Finally, the size of your process pool should not be greater than the number of CPUs on your computer. Why is that?</p>
+</section>
+</section>
+<section id="analyzing-programs" class="level1">
+<h1>Analyzing Programs</h1>
+<p>The goal of a software developer is to study and analyses algorithms. For concurrency and parallelism, we are looking to see if it makes sense to take the time to try to make it concurrent or parallel. Adding parallelism to software involves a learning curve and requires more effort.</p>
+<section id="fine-grained-coarse-grained-and-embarrassing-parallel" class="level2">
+<h2 class="anchored" data-anchor-id="fine-grained-coarse-grained-and-embarrassing-parallel">Fine-grained, coarse-grained, and embarrassing parallel</h2>
+<p>Applications are often classified according to how often their sub tasks need to synchronize or communicate with each other. An application exhibits fine-grained parallelism if its sub tasks must communicate many times per second; it exhibits coarse-grained parallelism if they do not communicate many times per second, and it exhibits embarrassing parallelism if they rarely or never have to communicate. Embarrassingly parallel applications are considered the easiest to add parallelism.</p>
+<p>(Parts of the following is from <a href="https://web.engr.oregonstate.edu/~pancake/presentations/sdsc.pdf">Parallelism Document</a>)</p>
+</section>
+<section id="embarrassingly-parallel" class="level2">
+<h2 class="anchored" data-anchor-id="embarrassingly-parallel">Embarrassingly parallel</h2>
+<p>The best type of software to make parallel is called <a href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">Embarrassingly parallel</a>.</p>
+<blockquote class="blockquote">
+<p>Parallel computing, a paradigm in computing which has multiple tasks running simultaneously, might contain what is known as an embarrassingly parallel workload or problem (also called <code>perfectly parallel</code>, <code>delightfully parallel</code> or <code>pleasingly parallel</code>). An embarrassingly parallel task can be considered a trivial case - little or no manipulation is needed to separate the problem into a number of parallel tasks. This is often the case where there is little or no dependency or need for communication between those parallel tasks, or for results between them.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Thus, these are different from distributed computing problems that need communication between tasks, especially communication of intermediate results. They are easy to perform on server farms which lack the special infrastructure used in a true supercomputer cluster. They are thus well suited to large, Internet-based distributed platforms such as BOINC, and do not suffer from parallel slowdown. The opposite of embarrassingly parallel problems are inherently serial problems, which cannot be parallelized at all.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>A common example of an embarrassingly parallel problem is 3D video rendering handled by a graphics processing unit, where each frame (forward method) or pixel (ray tracing method) can be handled with no interdependency. Some forms of password cracking are another embarrassingly parallel task that is easily distributed on central processing units, CPU cores, or clusters.</p>
+</blockquote>
+<p>Unfortunately, there are not a great deal of embarrassingly parallel problems to find. There is, of course, the other extreme case where a program can not have any parallelism. (For example, a shopping cart program. The program can’t do anything until the user makes a choice to do something).</p>
+<p>One of the goals of this course is to understand that we might be able to add parallelism to programs and if it makes sense and is possible, then we can speed up the software.</p>
+<p>Examples:</p>
+<ul>
+<li>3D image rendering</li>
+<li>Low level image processing</li>
+<li>Genetic programming — In genetic programming, algorithms are “evolved” in groups by combining and mutating previous generations. Each of these individuals are processed independently in parallel.</li>
+<li>Mandelbrot set — A fractal where each point is calculated individually, independent of the others.</li>
+<li>Monte Carlo algorithms — A wide range of computational tasks that are processed by pseudorandom sampling of individual elements.</li>
+<li>DFT (Discrete Fourier Transform) — A widely-used technique for processing equally-spaced samples of a function or signal. Commonly used in DSP (digital signal processing), based on the work of French mathematician Jean Fourier.</li>
+<li>Brute-force cryptographic tasks — A range of cryptographic problems, such as Proof-of-Work algorithms, that perform many similar computations, efficiently executed in parallel.</li>
+</ul>
+</section>
+<section id="pipeline-parallelism" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-parallelism">Pipeline Parallelism</h2>
+<p>Some software problems can be expressed in a pipeline where one stage creates data for the next stage, and so on. Computer graphic cards (GPUs) use the pipeline method.</p>
+<ul>
+<li>Data from different time steps used to generate series of images</li>
+<li>Job can be subdivided into phases which process the output of earlier phases</li>
+<li>Concurrency comes from overlapping the processing for multiple phases</li>
+<li>Key characteristic: only need to pass results one-way
+<ul>
+<li>Can delay start-up of later phases so input will be ready</li>
+</ul></li>
+<li>Potential problems
+<ul>
+<li>Assumes phases are computationally balanced</li>
+</ul></li>
+</ul>
+<p><img src="pipeline.png" class="img-fluid"></p>
+</section>
+<section id="fully-synchronous-parallelism" class="level2">
+<h2 class="anchored" data-anchor-id="fully-synchronous-parallelism">Fully Synchronous Parallelism</h2>
+<ul>
+<li>Same operation is applied in parallel to multiple data.</li>
+<li>Examples include weather predictions</li>
+<li>Key characteristic: Each operation is performed on all (or most) data
+<ul>
+<li>Operations/decisions depend on results of previous operations</li>
+</ul></li>
+<li>Potential problems
+<ul>
+<li>Serial bottlenecks force other processors to “wait”</li>
+</ul></li>
+</ul>
+</section>
+<section id="loosely-synchronous-parallelism" class="level2">
+<h2 class="anchored" data-anchor-id="loosely-synchronous-parallelism">Loosely Synchronous Parallelism</h2>
+<ul>
+<li>Amount of computation varies dramatically in time and space</li>
+<li>Concurrency from letting different processors proceed at their own rates</li>
+<li>Key characteristic
+<ul>
+<li>Processors each do small pieces of the problem, sharing information only intermittently</li>
+</ul></li>
+<li>Potential problems
+<ul>
+<li>Sharing information requires “synchronization” of processors (where one processor will have to wait for another)</li>
+</ul></li>
+</ul>
+</section>
+<section id="rules-of-thumb-based-on-type-of-problem" class="level2">
+<h2 class="anchored" data-anchor-id="rules-of-thumb-based-on-type-of-problem">Rules-of-Thumb Based on Type of Problem</h2>
+<ol type="1">
+<li>If your application fits the model of perfect parallelism
+<ul>
+<li>the parallelization task is relatively straightforward and likely to achieve respectable performance</li>
+</ul></li>
+<li>If your application is an example of pipeline parallelism
+<ul>
+<li>you have to do more work. If you can’t balance the computational intensity, it may not prove worthwhile</li>
+</ul></li>
+<li>If your application is fully synchronous
+<ul>
+<li>a significant amount of effort is required and payoff may be minimal. The decision to parallelize should be based on how uniform computational intensity is likely to be</li>
+</ul></li>
+<li>A loosely synchronous application is the most difficult to parallelize
+<ul>
+<li>it’s probably not worthwhile unless the points of CPU interaction are very infrequent</li>
+</ul></li>
+</ol>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
