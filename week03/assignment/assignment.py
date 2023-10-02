@@ -31,7 +31,7 @@ CPU_COUNT = mp.cpu_count() + 4
 
 # TODO Your final video need to have 300 processed frames.  However, while you are 
 # testing your code, set this much lower
-FRAME_COUNT = 20
+FRAME_COUNT = 300
 
 RED   = 0
 GREEN = 1
@@ -61,47 +61,57 @@ def create_new_frame(image_file, green_file, process_file):
 
 
 # TODO add any functions to need here
+# figure out what needs to be mapped etc.
+# new function here
 
-
-
+def better_frame (image_number):
+  image_file = rf'elephant/image{image_number:03d}.png'
+  green_file = rf'green/image{image_number:03d}.png'
+  process_file = rf'processed/image{image_number:03d}.png'
+  create_new_frame(image_file, green_file, process_file)
 if __name__ == '__main__':
+   start_img = 1
+   end_img = FRAME_COUNT
+   frame_range = range(start_img, end_img + 1)
     # single_file_processing(300)
     # print('cpu_count() =', cpu_count())
+  # make a for loop with a range include mp.Pool and target the new function arguements range start image to +1 end image after append the variable for the pool with the x axis cpus and next the y axis_times as the total time.
+   all_process_time = timeit.default_timer()
+   log = Log(show_terminal=True)
 
-    all_process_time = timeit.default_timer()
-    log = Log(show_terminal=True)
-
-    xaxis_cpus = []
-    yaxis_times = []
+   xaxis_cpus = []
+   yaxis_times = []
+   
 
     # TODO Process all frames trying 1 cpu, then 2, then 3, ... to CPU_COUNT
     #      add results to xaxis_cpus and yaxis_times
+    # looping and increasing the amount of cores used
+   for i in range(1 , CPU_COUNT+1):
+    with mp.Pool(i) as p:
+        start_time = timeit.default_timer()
+        p.map(better_frame, frame_range)
+        total_time = timeit.default_timer() - start_time
+        print(f'Time to Process all images = {total_time}')
+    xaxis_cpus.append(i)
+    yaxis_times.append(total_time)
 
-
-    # sample code: remove before submitting  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    # process one frame #10
-    image_number = 10
-
-    image_file = rf'elephant/image{image_number:03d}.png'
-    green_file = rf'green/image{image_number:03d}.png'
-    process_file = rf'processed/image{image_number:03d}.png'
-
-    start_time = timeit.default_timer()
-    create_new_frame(image_file, green_file, process_file)
-    print(f'\nTime To Process all images = {timeit.default_timer() - start_time}')
+   
+  # don't put start time with the loop but with np.Pool
+   start_time = timeit.default_timer()
+   print(f'\nTime To Process all images = {timeit.default_timer() - start_time}')
     # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-    log.write(f'Total Time for ALL processing: {timeit.default_timer() - all_process_time}')
+   log.write(f'Total Time for ALL processing: {timeit.default_timer() - all_process_time}')
 
     # create plot of results and also save it to a PNG file
-    plt.plot(xaxis_cpus, yaxis_times, label=f'{FRAME_COUNT}')
+   plt.plot(xaxis_cpus, yaxis_times, label=f'{FRAME_COUNT}')
     
-    plt.title('CPU Core yaxis_times VS CPUs')
-    plt.xlabel('CPU Cores')
-    plt.ylabel('Seconds')
-    plt.legend(loc='best')
+   plt.title('CPU Core yaxis_times VS CPUs')
+   plt.xlabel('CPU Cores')
+   plt.ylabel('Seconds')
+   plt.legend(loc='best')
 
-    plt.tight_layout()
-    plt.savefig(f'Plot for {FRAME_COUNT} frames.png')
-    plt.show()
+   plt.tight_layout()
+   plt.savefig(f'Plot for {FRAME_COUNT} frames.png')
+   plt.show()
